@@ -5,7 +5,6 @@ import './index.css'
 import App from './App.jsx'
 import Contact from './ContactUs.jsx'
 import About from './AboutUs.jsx'
-import LuxBlog from './luxBlog.jsx'
 import Quick from './QuickLoan.jsx'
 import PublicLending from './PublicLending.jsx'
 import PrivateLending from './PrivateLending.jsx'
@@ -33,7 +32,6 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/ContactUs" element={<Contact />} />
           <Route path="/AboutUs" element={<About />} />
-          <Route path="/LuxBlog" element={<LuxBlog />} />
           <Route path="/QuickLoan" element={<Quick />} />
           <Route path="/PublicLending" element={<PublicLending />} />
           <Route path="/PrivateLending" element={<PrivateLending />} />
