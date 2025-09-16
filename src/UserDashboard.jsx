@@ -468,7 +468,7 @@ function UserDashboard() {
   // Submit loan application (replace with API call)
   const handleApplyLoan = async ({ amount, duration, purpose, rate }) => {
     try {
-      const res = await fetch("http://localhost:2009/loan/create", {
+      const res = await fetch("https://loan-ends.onrender.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -501,7 +501,7 @@ function UserDashboard() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:2009/loan/mark", {
+      const res = await fetch("https://loan-ends.onrender.com", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ loanId, monthIdx }),
