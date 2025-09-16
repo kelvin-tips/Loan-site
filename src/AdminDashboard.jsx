@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import View from "./View";
 
+const API_URL = "https://loan-ends.onrender.com";
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loans, setLoans] = useState([]);
@@ -21,8 +23,8 @@ const AdminDashboard = () => {
     setLoading(true);
     setError("");
     Promise.all([
-      fetch("http://localhost:2009/user/get", { credentials: "include" }).then((res) => res.json()),
-      fetch("http://localhost:2009/loan/get", { credentials: "include" }).then((res) => res.json()),
+      fetch(`${API_URL}/user/get`, { credentials: "include" }).then((res) => res.json()),
+      fetch(`${API_URL}/loan/get`, { credentials: "include" }).then((res) => res.json()),
     ])
       .then(([usersData, loansData]) => {
         const usersArr = Array.isArray(usersData) ? usersData : usersData.users || [];
@@ -75,7 +77,7 @@ const AdminDashboard = () => {
 
   const handleApprove = async (loanId) => {
     try {
-      const res = await fetch(`http://localhost:2009/loan/${loanId}/approve`, {
+      const res = await fetch(`${API_URL}/loan/${loanId}/approve`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +85,7 @@ const AdminDashboard = () => {
         credentials: "include",
       });
       if (res.ok) {
-        const updatedLoans = await fetch("http://localhost:2009/loan/get", {
+        const updatedLoans = await fetch(`${API_URL}/loan/get`, {
           credentials: "include"
         }).then((r) => r.json());
         setLoans(Array.isArray(updatedLoans) ? updatedLoans : updatedLoans.loans || []);
@@ -98,7 +100,7 @@ const AdminDashboard = () => {
 
   const handleReject = async (loanId, reason) => {
     try {
-      const res = await fetch(`http://localhost:2009/loan/${loanId}/decline`, {
+      const res = await fetch(`${API_URL}/loan/${loanId}/decline`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +109,7 @@ const AdminDashboard = () => {
         body: JSON.stringify({ reason }),
       });
       if (res.ok) {
-        const updatedLoans = await fetch("http://localhost:2009/loan/get", {
+        const updatedLoans = await fetch(`${API_URL}/loan/get`, {
           credentials: "include"
         }).then((r) => r.json());
         setLoans(Array.isArray(updatedLoans) ? updatedLoans : updatedLoans.loans || []);
