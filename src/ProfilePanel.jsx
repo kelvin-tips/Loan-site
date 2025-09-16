@@ -27,7 +27,7 @@ function ProfilePanel() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:2009/user/edit/${user._id}`, {
+      const res = await fetch(`https://loan-ends.onrender.com/user/edit/${user._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

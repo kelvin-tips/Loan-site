@@ -13,7 +13,7 @@ function Signup() {
   // Get setUser from context
   const { setUser } = useMyContext();
 
-  const API_URL = "http://localhost:2009/";
+  const API_URL = "https://loan-ends.onrender.com";
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,7 +24,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}user/register`, {
+     const response = await fetch(`${API_URL}/user/register`, { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",

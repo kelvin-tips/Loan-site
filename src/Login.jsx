@@ -10,7 +10,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const API_URL = "http://localhost:2009";
+  const API_URL = "https://loan-ends.onrender.com";
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
