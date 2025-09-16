@@ -465,61 +465,61 @@ function UserDashboard() {
     { name: "Jun", Budget: 18000, Expense: 14000 },
   ];
 
-  // Submit loan application (replace with API call)
-  const handleApplyLoan = async ({ amount, duration, purpose, rate }) => {
-    try {
-      const res = await fetch("https://loan-ends.onrender.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: currentUserId,
-          amount,
-          interestRate: rate,
-          termMonths: duration,
-        }),
-      });
-      const data = await res.json();
-      if (res.ok && data) {
-        setLoans((loans) => [...loans, data.loan || data]);
-        toast.success("Loan application submitted!");
-      } else {
-        toast.error(data.message || "Failed to apply for loan.");
-      }
-    } catch (err) {
-      toast.error("Network error. Please try again.");
+  /// Submit loan application
+const handleApplyLoan = async ({ amount, duration, purpose, rate }) => {
+  try {
+    const res = await fetch("https://loan-ends.onrender.com/loan/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: currentUserId,
+        amount,
+        interestRate: rate,
+        termMonths: duration,
+        purpose,
+      }),
+    });
+    const data = await res.json();
+    if (res.ok && data) {
+      setLoans((loans) => [...loans, data.loan || data]);
+      toast.success("Loan application submitted!");
+    } else {
+      toast.error(data.message || "Failed to apply for loan.");
     }
-  };
+  } catch (err) {
+    toast.error("Network error. Please try again.");
+  }
+};
 
-  // Repayment handler with extra schedule/index safety
-  const handleRepay = async (loanId, monthIdx) => {
-    // Find the loan object
-    const loanObj = mappedLoans.find(l => (l.id || l._id) === loanId);
-    if (!loanObj || !loanObj.schedule || monthIdx >= loanObj.schedule.length) {
-      toast.error("Invalid repayment index or missing schedule.");
-      return;
+// Repayment handler
+const handleRepay = async (loanId, monthIdx) => {
+  const loanObj = mappedLoans.find(l => (l.id || l._id) === loanId);
+  if (!loanObj || !loanObj.schedule || monthIdx >= loanObj.schedule.length) {
+    toast.error("Invalid repayment index or missing schedule.");
+    return;
+  }
+  try {
+    const res = await fetch("https://loan-ends.onrender.com/loan/mark", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ loanId, monthIdx }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setLoans((prev) =>
+        prev.map((loan) => (loan._id === loanId ? data.loan : loan))
+      );
+      toast.success("Repayment marked!");
+    } else {
+      toast.error(data.message || "Failed to mark repayment.");
     }
-    try {
-      const res = await fetch("https://loan-ends.onrender.com", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ loanId, monthIdx }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setLoans((prev) =>
-          prev.map((loan) => (loan._id === loanId ? data.loan : loan))
-        );
-        toast.success("Repayment marked!");
-      } else {
-        toast.error(data.message || "Failed to mark repayment.");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Network error during repayment.");
-    }
-  };
+  } catch (err) {
+    console.error(err);
+    toast.error("Network error during repayment.");
+  }
+};
 
   const exportCSV = () => {
     const headers = "Amount,Status,Duration,Purpose\n";
