@@ -382,30 +382,35 @@ function UserDashboard() {
     return () => window.removeEventListener("NotificationPanel", handler);
   }, []);
 
-  useEffect(() => {
-    let isMounted = true;
-    document.body.classList.toggle("dark", darkMode);
-    window.localStorage.setItem("darkMode", darkMode);
-    fetch("http://localhost:2009/loan/get")
-      .then((res) => res.json())
-      .then((data) => {
-        const loansArr = Array.isArray(data) ? data : data.loans || [];
-        if (isMounted) setLoans(loansArr);
-        console.log("Fetched loans:", loansArr, "Current user:", currentUserId);
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setLoans([
-            { id: 1, userId: currentUserId, amount: 50000, duration: 6, interestRate: 0.1, status: "approved", purpose: "Personal", createdAt: new Date().toISOString(), schedule: getLoanSchedule({ amount: 50000, duration: 6, rate: 0.1, createdAt: new Date() }).schedule },
-            { id: 2, userId: currentUserId, amount: 200000, duration: 12, interestRate: 0.15, status: "paid", purpose: "Business", createdAt: new Date().toISOString(), schedule: getLoanSchedule({ amount: 200000, duration: 12, rate: 0.15, createdAt: new Date() }).schedule },
-            { id: 3, userId: currentUserId, amount: 100000, duration: 3, interestRate: 0.12, status: "rejected", purpose: "Education", createdAt: new Date().toISOString(), schedule: getLoanSchedule({ amount: 100000, duration: 3, rate: 0.12, createdAt: new Date() }).schedule },
-          ]);
-        }
-      });
-    return () => {
-      isMounted = false;
-    };
-  }, [darkMode, currentUserId]);
+ useEffect(() => {
+  let isMounted = true;
+  document.body.classList.toggle("dark", darkMode);
+  window.localStorage.setItem("darkMode", darkMode);
+
+  // Use deployed API and send userId as query param
+  fetch(`https://loan-ends.onrender.com/loan/get?userId=${currentUserId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const loansArr = Array.isArray(data) ? data : data.loans || [];
+      if (isMounted) setLoans(loansArr);
+      console.log("Fetched loans:", loansArr, "Current user:", currentUserId);
+    })
+    .catch((err) => {
+      if (isMounted && !currentUserId) {
+        // Only show demo loans if user is not logged in
+        setLoans([
+          { id: 1, userId: currentUserId, amount: 50000, duration: 6, interestRate: 0.1, status: "approved", purpose: "Personal", createdAt: new Date().toISOString(), schedule: getLoanSchedule({ amount: 50000, duration: 6, rate: 0.1, createdAt: new Date() }).schedule },
+          { id: 2, userId: currentUserId, amount: 200000, duration: 12, interestRate: 0.15, status: "paid", purpose: "Business", createdAt: new Date().toISOString(), schedule: getLoanSchedule({ amount: 200000, duration: 12, rate: 0.15, createdAt: new Date() }).schedule },
+          { id: 3, userId: currentUserId, amount: 100000, duration: 3, interestRate: 0.12, status: "rejected", purpose: "Education", createdAt: new Date().toISOString(), schedule: getLoanSchedule({ amount: 100000, duration: 3, rate: 0.12, createdAt: new Date() }).schedule },
+        ]);
+      } else if (isMounted) {
+        setLoans([]);
+      }
+    });
+  return () => {
+    isMounted = false;
+  };
+}, [darkMode, currentUserId]);
 
   const myLoans = Array.isArray(loan)
     ? loan.filter(l =>
