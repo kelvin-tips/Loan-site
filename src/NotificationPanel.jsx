@@ -11,9 +11,8 @@ const NotificationPanel = ({ onClose }) => {
     async function fetchNotifications() {
       if (!user?._id) return;
       try {
-        const res = await fetch(`http://localhost:2009/notification/get/${user._id}`);
+        const res = await fetch(`https://loan-ends.onrender.com/notification/get/${user._id}`);
         const data = await res.json();
-        // Filter and deduplicate greetings
         const filtered = Array.isArray(data)
           ? data.filter(n =>
               n.message &&
@@ -53,7 +52,8 @@ const NotificationPanel = ({ onClose }) => {
 
   async function handleMarkAsRead(id) {
     try {
-      await fetch(`http://localhost:2009/notification/${id}/read`, {
+      // FIX: Remove extra quote and typo in URL
+      await fetch(`https://loan-ends.onrender.com/notification/${id}/read`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" }
       });
